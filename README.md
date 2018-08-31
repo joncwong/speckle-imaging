@@ -32,7 +32,7 @@ $ npm install
 $ npm start
 ```
 
-#### License
+## License
 Copyright (c) 2018, <copyright holder>
 All rights reserved.
 
