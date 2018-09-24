@@ -15,7 +15,8 @@ con.connect(function(err) {
   if (err) throw err;
   console.log("Connected!");
 });
- 
+
+// Root 
 app.get('/', function (req, res) {
   res.send('Hello World')
 })
@@ -24,6 +25,15 @@ app.get('/', function (req, res) {
 // Retrieve all olist
 app.get('/olist', function (req, res) {
   con.query('SELECT * FROM dec14raw', function (error, results, fields) {
+      if (error) throw error;
+      return res.send({ error: false, data: results, message: 'olist files.' });
+  });
+});
+
+// Retreieve specific olist data with specified starId 
+app.get('/olist/:starId', function (req, res) {
+  let starId = req.params.starId;
+  con.query('SELECT * FROM dec14raw WHERE star_id=\'' + starId + '\'', function (error, results, fields) {
       if (error) throw error;
       return res.send({ error: false, data: results, message: 'olist files.' });
   });
