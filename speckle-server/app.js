@@ -1,13 +1,17 @@
 var express = require('express')
 var app = express()
+var cors = require('cors');
+const port = 8080
 require('dotenv').config();
 
 var mysql = require('mysql');
 
+app.use(cors());
+
 var con = mysql.createConnection({
-  host: process.env.PORT,
+  host: 'localhost',
   user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
+  password: process.env.DB_PASS,
   database: process.env.DB_NAME
 });
 
@@ -35,8 +39,8 @@ app.get('/olist/:starId', function (req, res) {
   let starId = req.params.starId;
   con.query('SELECT * FROM dec14raw WHERE star_id=\'' + starId + '\'', function (error, results, fields) {
       if (error) throw error;
-      return res.send({ error: false, data: results, message: 'olist files.' });
+      return res.json({ error: false, data: results, message: 'olist files.' });
   });
 });
 
-app.listen(3000)
+app.listen(port, () => console.log(`Example app listening on port ${port}!`))

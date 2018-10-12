@@ -16,9 +16,24 @@ class SearchBar extends Component {
           InputLabelProps={{
             shrink: true,
           }}
+          onChange={e => this.setState({ input: e.target.value })}
           onKeyPress={ (e) => {
             if (e.key === 'Enter') {
-              console.log(this.value);
+              console.log(this.state['input']);
+              let searchInput = this.state['input'];
+
+              fetch(`http://localhost:8080/olist/${searchInput}`)
+              .then(function(response) {
+                  if (!response.ok) {
+                      throw Error(response.statusText);
+                  }
+                  return response;
+              }).then(function(response) {
+                response.json().then(body => console.log(body));
+              }).catch(function(error) {
+                  console.log(error);
+              });
+      
             }
           }
         }
