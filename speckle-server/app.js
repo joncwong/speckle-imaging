@@ -22,9 +22,8 @@ con.connect(function(err) {
 
 // Root 
 app.get('/', function (req, res) {
-  res.send('Hello World')
+  res.send('Root endpoint, nothing interesting here')
 })
-
 
 // Retrieve all olist
 app.get('/olist', function (req, res) {
@@ -35,12 +34,19 @@ app.get('/olist', function (req, res) {
 });
 
 // Retreieve specific olist data with specified starId 
+// DEPRECATED, THIS ENDPOINT IS NO LONGER NEEDED 
 app.get('/olist/:starId', function (req, res) {
   let starId = req.params.starId;
   con.query('SELECT * FROM dec14raw WHERE star_id=\'' + starId + '\'', function (error, results, fields) {
       if (error) throw error;
       return res.json({ error: false, data: results, message: 'olist files.' });
   });
+});
+
+// Retreieve metadata of star via coordinate search 
+app.get('/coord/:starCoord', function (req, res) {
+  let starCoord = req.params.starCoord;
+  console.log(starCoord) // Placeholder 
 });
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
