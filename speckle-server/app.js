@@ -46,7 +46,11 @@ app.get('/olist/:starId', function (req, res) {
 // Retreieve metadata of star via coordinate search 
 app.get('/coord/:starCoord', function (req, res) {
   let starCoord = req.params.starCoord;
-  console.log(starCoord) // Placeholder 
+  let starCoordSplit = starCoord.split(" ");
+  let rightAsc = starCoordSplit[0];
+  let dec = starCoordSplit[1];
+  console.log("rightAsc: " + rightAsc); // Placeholder 
+  console.log("dec: " + dec);
 });
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
