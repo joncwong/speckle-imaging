@@ -1,6 +1,6 @@
 # Speckle Imaging Database
 
-The NASA Ames Research Center Speckle Imaging Group produces the highest resolution imaging possible from a single telescope and currently operates instruments at the WIYN, Gemini-North, and Gemini-South telescopes. These instruments produce a significant volume of data.
+The [NASA Ames Research Center](https://www.nasa.gov/ames) Speckle Imaging Group produces the highest resolution imaging possible from a single telescope and currently operates instruments at the WIYN, Gemini-North, and Gemini-South telescopes. These instruments produce a significant volume of data.
 
 This project is an open source, searchable database that holds terabytes of this data. 
 
