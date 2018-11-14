@@ -4,9 +4,13 @@ The NASA Ames Research Center Speckle Imaging Group produces the highest resolut
 
 This project is an open source, searchable database that holds terabytes of this data. 
 
+![Example Fits File](https://imgur.com/a/hsWErLM)
+*Example Fits File from the Speckle Imaging Group*
+
 ## Project Layout
-- (insert link to express directory) - (description)
-- (insert link to react directory) - (description)
+- [speckle-server]([https://github.com/exlunae/speckle-imaging/tree/master/speckle-server) - Independent directory containing source code for the project's server side.
+- [speckle-client](https://github.com/exlunae/speckle-imaging/tree/master/speckle-client) - Indpendent directory containing source code for the project's client side.
+- [scripts]([https://github.com/exlunae/speckle-imaging/tree/master/scripts) - Contains all the data transformation scripts and all automative processes. Currently needs to be ran manually. 
 ## Installation
 This project's server-side is built with Express.js while the client-side is built with React.js.
 ### Express Server
@@ -15,9 +19,9 @@ Speckle Imaging Database (server-side) is running on [Node.js](https://nodejs.or
 Install the dependencies and start the server.
 
 ```sh
-$ cd speckle-imaging
+$ cd speckle-server
 $ npm install
-$ npm start
+$ node app.js
 ```
 
 ### React Server
@@ -27,33 +31,11 @@ Speckle Imaging Database (client-side) is running on [React.js](https://reactjs.
 Install the dependencies and start the server.
 
 ```sh
-$ cd speckle-imaging
+$ cd speckle-client
+$ cd react-client
 $ npm install
 $ npm start
 ```
+### Scripts 
 
-## License
-Copyright (c) 2018, <copyright holder>
-All rights reserved.
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are met:
-    * Redistributions of source code must retain the above copyright
-      notice, this list of conditions and the following disclaimer.
-    * Redistributions in binary form must reproduce the above copyright
-      notice, this list of conditions and the following disclaimer in the
-      documentation and/or other materials provided with the distribution.
-    * Neither the name of the <organization> nor the
-      names of its contributors may be used to endorse or promote products
-      derived from this software without specific prior written permission.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
-ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-DISCLAIMED. IN NO EVENT SHALL <COPYRIGHT HOLDER> BE LIABLE FOR ANY
-DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+Scripts are written in [Python](https://www.python.org/downloads/release/python-365/) v3.6.5. Running scripts on other version of Python has not been tested. Currently unknown which versions are compatible.
