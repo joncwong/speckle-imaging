@@ -4,7 +4,7 @@ The NASA Ames Research Center Speckle Imaging Group produces the highest resolut
 
 This project is an open source, searchable database that holds terabytes of this data. 
 
-![Example Fits File](https://imgur.com/a/hsWErLM)
+![Example Fits File](https://i.imgur.com/OjLYFA8.png)
 *Example Fits File from the Speckle Imaging Group*
 
 ## Project Layout
