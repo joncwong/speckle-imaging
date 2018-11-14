@@ -4,7 +4,7 @@ The [NASA Ames Research Center](https://www.nasa.gov/ames) Speckle Imaging Group
 
 This project is an open source, searchable database that holds terabytes of this data. 
 
-![Example Fits File](https://i.imgur.com/OjLYFA8.png)
+![Example Fits File](https://i.imgur.com/OjLYFA8.png =120x120)
 *Example Fits File from the Speckle Imaging Group*
 
 ## Project Layout
