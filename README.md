@@ -9,9 +9,9 @@ This project is an open source, searchable database that holds terabytes of this
 </p>
 
 ## Project Layout
-- [speckle-server]([https://github.com/exlunae/speckle-imaging/tree/master/speckle-server) - Independent directory containing source code for the project's server side.
+- [speckle-server](https://github.com/exlunae/speckle-imaging/tree/master/speckle-server) - Independent directory containing source code for the project's server side.
 - [speckle-client](https://github.com/exlunae/speckle-imaging/tree/master/speckle-client) - Indpendent directory containing source code for the project's client side.
-- [scripts]([https://github.com/exlunae/speckle-imaging/tree/master/scripts) - Contains all the data transformation scripts and all automative processes. Currently needs to be ran manually. 
+- [scripts](https://github.com/exlunae/speckle-imaging/tree/master/scripts) - Contains all the data transformation scripts and all automative processes. Currently needs to be ran manually. 
 ## Installation
 This project's server-side is built with Express.js while the client-side is built with React.js.
 ### Express Server
