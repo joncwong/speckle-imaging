@@ -4,8 +4,10 @@ The [NASA Ames Research Center](https://www.nasa.gov/ames) Speckle Imaging Group
 
 This project is an open source, searchable database that holds terabytes of this data. 
 
+<p align="center">
 <img src="https://i.imgur.com/OjLYFA8.png" alt="Example fits file" class="center" height="400" width="400">
 *Example Fits File from the Speckle Imaging Group*
+</p>
 
 ## Project Layout
 - [speckle-server]([https://github.com/exlunae/speckle-imaging/tree/master/speckle-server) - Independent directory containing source code for the project's server side.
