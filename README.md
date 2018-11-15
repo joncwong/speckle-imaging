@@ -13,7 +13,7 @@ This project is an open source, searchable database that holds terabytes of this
 - [speckle-client](https://github.com/exlunae/speckle-imaging/tree/master/speckle-client) - Indpendent directory containing source code for the project's client side.
 - [scripts](https://github.com/exlunae/speckle-imaging/tree/master/scripts) - Contains all the data transformation scripts and all automative processes. Currently needs to be ran manually. 
 ## Installation
-This project's server-side is built with Express.js while the client-side is built with React.js.
+This project's server-side is built with Express.js while the client-side is built with React.js. It follows the client-server architecture, loosely coupling the UI from the Server. So, in order to start up the project, two terminals will be necessary: one for the React client, one for the Express server. 
 ### Express Server
 Speckle Imaging Database (server-side) is running on [Node.js](https://nodejs.org/) v8.11.4 and [Express.js](https://expressjs.com/) v4.16.0.
 
