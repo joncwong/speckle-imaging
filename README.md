@@ -40,3 +40,9 @@ $ npm start
 ### Scripts 
 
 Scripts are written in [Python](https://www.python.org/downloads/release/python-365/) v3.6.5. Running scripts on other version of Python has not been tested. Currently unknown which versions are compatible.
+
+## Status
+
+- Under development.
+- Little to no documentation, in progress.
+- Docker image coming. 
