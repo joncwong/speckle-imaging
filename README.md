@@ -6,7 +6,6 @@ This project is an open source, searchable database that holds terabytes of this
 
 <p align="center">
 <img src="https://i.imgur.com/OjLYFA8.png" alt="Example fits file" class="center" height="400" width="400">
-*Example Fits File from the Speckle Imaging Group*
 </p>
 
 ## Project Layout
