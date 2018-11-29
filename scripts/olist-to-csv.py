@@ -1,21 +1,22 @@
+from tkinter import Tk
+from tkinter.filedialog import askopenfilename
+import csv 
+import re
+import os
 
-# coding: utf-8
+Tk().withdraw() # we don't want a full GUI, so keep the root window from appearing
+file_name = askopenfilename() # show an "Open" dialog box and return the path to the selected file
+print(file_name)
 
-# In[1]:
-
-
-file_name = 'dec15raw.olist'
 with open(file_name) as file:
     data = file.read()
 
-
-# In[3]:
-
-
-import re
 new_data = []
+head, tail = os.path.split(file_name)
 split_by_line = data.split('\n')
 for line in split_by_line:
+    if len(line.split(" ")) < 4:
+        continue
     if line != "":
         if str(line)[0] == "H":
             comment = False
@@ -33,28 +34,24 @@ for line in split_by_line:
             #Grab only the first ten entries, separated by spaces in olist files
             line_split = line.split(" ")
             first_nine_entries = line_split[:9]
-            first_nine_entries = " ".join(first_nine_entries)
+            first_nine_entries = ",".join(first_nine_entries)
             #Replace spaces in the tenth column/entry with underscores
             tenth_entry = " ".join(line_split[9:])
             tenth_entry = tenth_entry.replace(" ", "_")
             #Join first 9 entries with 10th entry, creating the essential line
-            line = first_nine_entries + " " + tenth_entry
+            line = first_nine_entries + "," + tenth_entry
             print(line)
             #Add line and reformatted comments back into the dataset
             if not comment:
                 #Once again, strip any double spaces from joining the other entries
                 line = re.sub("\s\s+", " ", line)
             else:
-                line = line + " " + comment
+                line = line + "," + comment
                 line = re.sub("\s\s+", " ", line)
             new_data.append(line)
 
-
-# In[4]:
-
-
-with open("transformed4_" + file_name, 'w+') as new_file:
+with open(tail + ".csv", 'w+') as new_file:
     for line in new_data:
         new_file.write(line + "\n")
         print("hello")
-
+    print("Done writing file")
