@@ -27,7 +27,7 @@ app.get('/', function (req, res) {
 
 // Retrieve all olist
 app.get('/olist', function (req, res) {
-  con.query('SELECT * FROM dec14raw', function (error, results, fields) {
+  con.query('SELECT * FROM olist', function (error, results, fields) {
       if (error) throw error;
       return res.send({ error: false, data: results, message: 'olist files.' });
   });
@@ -35,13 +35,13 @@ app.get('/olist', function (req, res) {
 
 // Retreieve specific olist data with specified starId 
 // DEPRECATED, THIS ENDPOINT IS NO LONGER NEEDED 
-app.get('/olist/:starId', function (req, res) {
-  let starId = req.params.starId;
-  con.query('SELECT * FROM dec14raw WHERE star_id=\'' + starId + '\'', function (error, results, fields) {
-      if (error) throw error;
-      return res.json({ error: false, data: results, message: 'olist files.' });
-  });
-});
+// app.get('/olist/:starId', function (req, res) {
+//   let starId = req.params.starId;
+//   con.query('SELECT * FROM dec14raw WHERE star_id=\'' + starId + '\'', function (error, results, fields) {
+//       if (error) throw error;
+//       return res.json({ error: false, data: results, message: 'olist files.' });
+//   });
+// });
 
 // Retreieve metadata of star via coordinate search 
 app.get('/coord/:starCoord', function (req, res) {
@@ -51,6 +51,10 @@ app.get('/coord/:starCoord', function (req, res) {
   let dec = starCoordSplit[1];
   console.log("rightAsc: " + rightAsc); // Placeholder 
   console.log("dec: " + dec);
+  con.query('SELECT * FROM olist WHERE olist.right_asc=\'' + rightAsc + '\'' + 'AND olist.dec=\'' + dec + '\'', function (error, results, fields) {
+    if (error) throw error;
+    return res.json({ error: false, data: results, message: 'olist files.' });
+  });
 });
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
