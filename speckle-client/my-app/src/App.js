@@ -10,6 +10,7 @@ class App extends Component {
       <div className="App">
         <h1>Speckle Imaging Database</h1>
         <SearchBar></SearchBar>
+        <p>Right ascension "space" declination </p>
         <SearchResults></SearchResults>
       </div>
     );
