@@ -13,15 +13,15 @@ class App extends Component {
     return (
       <div className="App">
         <h1>Speckle Imaging Database</h1>
-        <SearchBar formatResults={this.formatResults}></SearchBar>
+        <SearchBar passResults={this.passResults}></SearchBar>
         <p>Right ascension "space" declination </p>
-        <SearchResults ref={this.formattedResults} updateResults={this.update}></SearchResults>
+        <SearchResults ref={this.formattedResults}></SearchResults>
       </div>
     );
   }
 
-  formatResults = (data) => {
-    this.formattedResults.current.update(data)
+  passResults = (data) => {
+    this.formattedResults.current.updateResults(data)
   }
 
 }

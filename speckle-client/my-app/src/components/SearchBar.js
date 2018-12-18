@@ -46,7 +46,7 @@ class SearchBar extends Component {
     this.setState({
       results: data
     })
-    this.props.formatResults(data)
+    this.props.passResults(data)
     //console.log(this.state['results'])
   }
 
