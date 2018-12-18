@@ -14,10 +14,14 @@ class SearchBar extends Component {
   }
 
   handleSearch(e) {
+    console.log(e)
     if (e.key === 'Enter') {
       console.log(this.state['input']);
       let searchInput = this.state['input'];
-
+      if (searchInput === '') {
+        console.log("Empty search query.. aborted");
+        return
+      }
       let response = fetch(`http://localhost:8080/coord/${searchInput}`)
       .then(function(response) {
           if (!response.ok) {
@@ -29,22 +33,25 @@ class SearchBar extends Component {
       }).catch(function(error) {
           console.log(error);
       });
-      
+
       response.then(function(body) {
         return body.data
       })
       .then(results => this.setResults(results))
-
     }
+
   }
 
   setResults(data) {
     this.setState({
       results: data
     })
-    console.log(this.state['results'])
+    this.props.formatResults(data)
+    //console.log(this.state['results'])
   }
+
   render() {
+    console.log("I RERENDERED")
     return (
       <div className="App">
         <TextField
@@ -60,9 +67,7 @@ class SearchBar extends Component {
           }}
           onChange={e => this.setState({ input: e.target.value })}
           onKeyPress= {this.handleSearch}
-        
         />
-
       </div>
       
     );
