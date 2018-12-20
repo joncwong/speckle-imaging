@@ -7,7 +7,10 @@ class SearchBar extends Component {
     super(props)
     this.state = {
       input: '',
-      results: ''
+      results: '',
+      searchType: 'coordinate',
+      searchLabel: 'Search via a Star\'s Coordinate',
+      searchPlaceHolder: 'e.g 23:59:22.9 +55:49:27'
     }
     this.handleSearch = this.handleSearch.bind(this)
     this.setResults = this.setResults.bind(this)
@@ -23,7 +26,7 @@ class SearchBar extends Component {
         console.log("Empty search query.. aborted");
         return
       }
-      let response = fetch(`http://localhost:8080/coord/${searchInput}`)
+      let response = fetch(`http://localhost:8080/${this.state['searchType']}/${searchInput}`)
       .then(function(response) {
           if (!response.ok) {
               throw Error(response.statusText);
@@ -40,7 +43,6 @@ class SearchBar extends Component {
       })
       .then(results => this.setResults(results))
     }
-
   }
 
   setResults(data) {
@@ -48,19 +50,18 @@ class SearchBar extends Component {
       results: data
     })
     this.props.passResults(data)
-    //console.log(this.state['results'])
   }
-
+  
   render() {
-    console.log("I RERENDERED")
+    console.log("I RERENDERED");
     return (
       <div className="App">
         <TextField
           ref="myField"
           id="filled-full-width"
-          label="Search a Star Coordinate"
+          label={this.state['searchLabel']}
           style={{ width: 600}}
-          placeholder="e.g 23:59:22.9 +55:49:27"
+          placeholder={this.state['searchPlaceHolder']}
           margin="normal"
           variant="filled"
           InputLabelProps={{
@@ -72,6 +73,8 @@ class SearchBar extends Component {
       </div>
     );
   }
+
+
 
 }
 

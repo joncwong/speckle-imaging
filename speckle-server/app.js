@@ -44,7 +44,25 @@ app.get('/olist', function (req, res) {
 // });
 
 // Retreieve metadata of star via coordinate search 
-app.get('/coord/:starCoord', function (req, res) {
+app.get('/coordinate/:starCoord', function (req, res) {
+  let starCoord = req.params.starCoord;
+  let starCoordSplit = starCoord.split(" ");
+  let rightAsc = starCoordSplit[0];
+  let dec = starCoordSplit[1];
+  let validQuery = false;
+  console.log("rightAsc: " + rightAsc); // Placeholder 
+  console.log("dec: " + dec);
+  con.query('SELECT * FROM olist WHERE olist.right_asc=\'' + rightAsc + '\'' + 'AND olist.dec=\'' + dec + '\'', function (error, results, fields) {
+    if (error) throw error;
+    if (!results === undefined || !results.length == 0) {
+      validQuery = true;
+    }
+    return res.json({ error: false, data: results, valid: validQuery });
+  });
+});
+
+//CLONED above endpoint for now, change later to reflect an identifier query 
+app.get('/identifier/:starCoord', function (req, res) {
   let starCoord = req.params.starCoord;
   let starCoordSplit = starCoord.split(" ");
   let rightAsc = starCoordSplit[0];

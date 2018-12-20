@@ -12,13 +12,14 @@ class App extends Component {
       displayResults: false
     }
     this.formattedResults = React.createRef();
+    this.searchBar = React.createRef(); 
   }
   render() {
     return (
       <div className="App">
         <h1>Speckle Imaging Database</h1>
-        <SearchBar passResults={this.passResults} setDisplay={this.setDisplay}></SearchBar>
-        <SearchRadio></SearchRadio>
+        <SearchBar ref={this.searchBar} passResults={this.passResults} setDisplay={this.setDisplay}></SearchBar>
+        <SearchRadio setSearch={this.setSearch}></SearchRadio>
         <SearchResults ref={this.formattedResults}></SearchResults>
       </div>
     );
@@ -38,10 +39,23 @@ class App extends Component {
     });
   }
 
-  
-
-  
-
+  setSearch = (option) => {
+    this.searchBar.current.setState({
+      searchType: option
+    })
+    if (option === 'coordinate') {
+      this.searchBar.current.setState({
+        searchLabel: 'Search via a Star\'s Coordinate',
+        searchPlaceHolder: 'e.g 23:59:22.9 +55:49:27'
+      });
+    }
+    else if (option === 'identifier') {
+      this.searchBar.current.setState({
+        searchLabel: 'Search via a Star\'s Identifier',
+        searchPlaceHolder: 'e.g H615578'
+      });
+    }
+  }
 
 }
 
