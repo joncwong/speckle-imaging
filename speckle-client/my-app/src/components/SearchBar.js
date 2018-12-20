@@ -19,6 +19,7 @@ class SearchBar extends Component {
       console.log(this.state['input']);
       let searchInput = this.state['input'];
       if (searchInput === '') {
+        this.props.setDisplay(false)
         console.log("Empty search query.. aborted");
         return
       }
@@ -33,8 +34,8 @@ class SearchBar extends Component {
       }).catch(function(error) {
           console.log(error);
       });
-
-      response.then(function(body) {
+      response.then( body => {
+        this.props.setDisplay(body.valid)
         return body.data
       })
       .then(results => this.setResults(results))
@@ -69,7 +70,6 @@ class SearchBar extends Component {
           onKeyPress= {this.handleSearch}
         />
       </div>
-      
     );
   }
 

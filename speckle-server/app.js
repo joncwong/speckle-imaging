@@ -49,11 +49,15 @@ app.get('/coord/:starCoord', function (req, res) {
   let starCoordSplit = starCoord.split(" ");
   let rightAsc = starCoordSplit[0];
   let dec = starCoordSplit[1];
+  let validQuery = false;
   console.log("rightAsc: " + rightAsc); // Placeholder 
   console.log("dec: " + dec);
   con.query('SELECT * FROM olist WHERE olist.right_asc=\'' + rightAsc + '\'' + 'AND olist.dec=\'' + dec + '\'', function (error, results, fields) {
     if (error) throw error;
-    return res.json({ error: false, data: results, message: 'olist files.' });
+    if (!results === undefined || !results.length == 0) {
+      validQuery = true;
+    }
+    return res.json({ error: false, data: results, valid: validQuery });
   });
 });
 
