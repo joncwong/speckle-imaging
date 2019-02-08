@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import SearchBar from './components/SearchBar';
 import SearchResults from './components/SearchResults';
 import SearchRadio from './components/SearchRadio';
+import KeyLegend from './components/KeyLegend';
 import './App.css';
 
 class App extends Component {
@@ -14,6 +15,11 @@ class App extends Component {
     this.formattedResults = React.createRef();
     this.searchBar = React.createRef(); 
   }
+
+  componentDidMount() {
+    document.title = 'Speckle Imaging Database'
+  }
+
   render() {
     return (
       <div className="App">
@@ -21,6 +27,7 @@ class App extends Component {
         <SearchBar ref={this.searchBar} passResults={this.passResults} setDisplay={this.setDisplay}></SearchBar>
         <SearchRadio setSearch={this.setSearch}></SearchRadio>
         <SearchResults ref={this.formattedResults}></SearchResults>
+        <KeyLegend></KeyLegend>
       </div>
     );
   }

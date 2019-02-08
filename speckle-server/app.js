@@ -52,7 +52,7 @@ app.get('/coordinate/:starCoord', function (req, res) {
   let validQuery = false;
   console.log("rightAsc: " + rightAsc); // Placeholder 
   console.log("dec: " + dec);
-  con.query('SELECT * FROM olist WHERE olist.right_asc=\'' + rightAsc + '\'' + 'AND olist.dec=\'' + dec + '\'', function (error, results, fields) {
+  con.query('SELECT * FROM olistv2 WHERE olistv2.right_asc=\'' + rightAsc + '\'' + 'AND olistv2.dec=\'' + dec + '\'', function (error, results, fields) {
     if (error) throw error;
     if (!results === undefined || !results.length == 0) {
       validQuery = true;
@@ -70,7 +70,7 @@ app.get('/identifier/:starCoord', function (req, res) {
   let validQuery = false;
   console.log("rightAsc: " + rightAsc); // Placeholder 
   console.log("dec: " + dec);
-  con.query('SELECT * FROM olist WHERE olist.right_asc=\'' + rightAsc + '\'' + 'AND olist.dec=\'' + dec + '\'', function (error, results, fields) {
+  con.query('SELECT * FROM olistv2 WHERE olistv2.right_asc=\'' + rightAsc + '\'' + 'AND olistv2.dec=\'' + dec + '\'', function (error, results, fields) {
     if (error) throw error;
     if (!results === undefined || !results.length == 0) {
       validQuery = true;

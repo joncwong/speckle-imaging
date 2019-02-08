@@ -6,6 +6,13 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 
+const divStyle = {
+    marginTop: '20px',
+    marginRight: '30px',
+    marginLeft: '30px',
+    marginBottom: '30px'
+  };
+  
 class SearchResults extends Component {
 
     constructor(props) {
@@ -20,7 +27,7 @@ class SearchResults extends Component {
 
     render() {
         return (
-            <div align="middle">
+            <div align="middle" margin="100px">
                 {this.formatResults()}
             </div>
         )
@@ -30,13 +37,13 @@ class SearchResults extends Component {
         this.setState({
             searchResults: data
         })
-        console.log("hello?")
         console.log(this.state['searchResults'])
     }
 
     formatResults() {
         if (this.state['display']) {
             return (
+                <div style={divStyle}>
                 <Paper>
                     <Table>
                         <TableHead>
@@ -52,7 +59,8 @@ class SearchResults extends Component {
                                 <TableCell align="right">Magnitude</TableCell>
                                 <TableCell align="right">Program ID</TableCell>
                                 <TableCell align="right">Comment</TableCell>
-                
+                                <TableCell align="right">Objects</TableCell>
+                                <TableCell align="right">Radius</TableCell>
                             </TableRow>
                         </TableHead>
                         <TableBody>
@@ -70,20 +78,21 @@ class SearchResults extends Component {
                                 <TableCell align="right">{row.mag}</TableCell>
                                 <TableCell align="right">{row.program_id}</TableCell>
                                 <TableCell align="right">{row.comment}</TableCell>
+                                <TableCell align="right">{row.objects}</TableCell>
+                                <TableCell align="right">{row.search_radius}</TableCell>
                             </TableRow>
                             );
                         })}
                         </TableBody>
                     </Table>
                 </Paper>
+                </div>
             )
         }
         else {
             return <p>No results</p>
         }
     }
-
-    
 
   }
   
