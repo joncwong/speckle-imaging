@@ -44,7 +44,7 @@ class SearchResults extends Component {
         if (this.state['display']) {
             return (
                 <div style={divStyle}>
-                <Paper>
+                <Paper style={{maxHeight: 700, overflow:'auto'}}>
                     <Table>
                         <TableHead>
                             <TableRow>
