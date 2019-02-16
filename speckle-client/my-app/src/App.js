@@ -39,7 +39,7 @@ class App extends Component {
   setDisplay = (valid) => {
     this.setState({
       displayResults: valid
-    });
+    }); 
     console.log(this.state['displayResults']);
     this.formattedResults.current.setState({
       display: valid

@@ -13,11 +13,10 @@ Tk().withdraw()
 file_name = askopenfilename() 
 print(file_name)
 
-
 def query_simbad(ra, dec):
     """
         Return a dictionary of Simbad results given a coordinate set.
-        Parameters: 
+            Parameters: 
         ra (string): Right Ascension 
         dec (string): Declination 
         Returns:

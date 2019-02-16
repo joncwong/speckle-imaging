@@ -54,6 +54,9 @@ app.get('/coordinate/:starCoord', function (req, res) {
   console.log("dec: " + dec);
   con.query('SELECT * FROM olistv2 WHERE olistv2.right_asc=\'' + rightAsc + '\'' + 'AND olistv2.dec=\'' + dec + '\'', function (error, results, fields) {
     if (error) throw error;
+    if (!results === undefined && result.length == 0) {
+      console.log()
+    }
     if (!results === undefined || !results.length == 0) {
       validQuery = true;
     }
