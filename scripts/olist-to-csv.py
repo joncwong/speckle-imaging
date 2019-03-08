@@ -7,11 +7,53 @@ from astroquery.simbad import Simbad
 import astropy.coordinates as coord
 from astropy import units as u
 from astropy.coordinates import SkyCoord
+import mysql.connector
 
 # Opens a dialog box for user to select .olist file to convert 
 Tk().withdraw() 
-file_name = askopenfilename() 
+file_name = askopenfilename(filetypes=[("Olist Files", "*.olist")]) 
+head, tail = os.path.split(file_name)
 print(file_name)
+
+with open(file_name) as file:
+    data = file.read()
+
+# Connect to database 
+conn = mysql.connector.connect(
+  host="localhost",
+  db="speckle_imaging",
+  user="root",
+  passwd="password"
+)
+cursor = conn.cursor()
+print(conn)
+#conn.close()
+
+insert_blob_query = "INSERT INTO olist (name, file) VALUES (%s, %s)"
+
+insert_args = (file_name, data)
+
+def insert_blob(): 
+    """
+        Inserts opened olist file as a blob into database 
+    """
+    try: 
+        cursor = conn.cursor()
+        cursor.execute(insert_blob_query, insert_args)
+        conn.commit()
+    except mysql.connector.Error as e:
+        print("Error code:", e.errno)    # error number
+        print("SQLSTATE value:", e.sqlstate) # SQLSTATE value
+        print("Error message:", e.msg)     # error message
+        print("Error:", e)                   # errno, sqlstate, msg values
+        s = str(e)
+        print("Error:", s)                   # errno, sqlstate, msg values
+    finally:
+        olist_id = cursor.lastrowid
+        cursor.close()
+    return olist_id 
+        # conn.close()
+
 
 def query_simbad(ra, dec):
     """
@@ -59,13 +101,9 @@ def query_simbad(ra, dec):
     simbad_results['objects'] = objects
     return simbad_results
 
-
-with open(file_name) as file:
-    data = file.read()
-
 new_data = [] 
-head, tail = os.path.split(file_name)
 split_by_line = data.split('\n')
+olist_id = insert_blob()
 for line in split_by_line:
     if len(line.split(" ")) < 4:
         continue
@@ -110,18 +148,20 @@ for line in split_by_line:
             if not comment:
                 #Once again, strip any double spaces from joining the other entries
                 line = re.sub("\s\s+", " ", line)
-                line = line + "|"
-            else:
-                line = line + "|" + comment
-                line = re.sub("\s\s+", " ", line)
+                line = line + "|" + str(olist_id)
+            # else:
+            #     line = line + "|" + comment
+            #     line = re.sub("\s\s+", " ", line)
             new_data.append(line)
             print(line)
 
 with open("newbatch" + tail + ".csv", 'w+') as new_file:
     #write header
-    header = "star_id|fits_file|time|blue_gain|red_gain|right_asc|dec|epoch|mag|program_id|objects|search_radius|comment"
+    header = "star_id|fits_file|time|blue_gain|red_gain|right_asc|dec|epoch|mag|program_id|objects|search_radius|olist_id"
     new_file.write(header + "\n")
     for line in new_data:
         new_file.write(line + "\n")
         print("hello")
     print("Done writing file")
+
+conn.close()
