@@ -8,30 +8,8 @@ import astropy.coordinates as coord
 from astropy import units as u
 from astropy.coordinates import SkyCoord
 import mysql.connector
-
-# Opens a dialog box for user to select .olist file to convert 
-Tk().withdraw() 
-file_name = askopenfilename(filetypes=[("Olist Files", "*.olist")]) 
-head, tail = os.path.split(file_name)
-print(file_name)
-
-with open(file_name) as file:
-    data = file.read()
-
-# Connect to database 
-conn = mysql.connector.connect(
-  host="localhost",
-  db="speckle_imaging",
-  user="root",
-  passwd="password"
-)
-cursor = conn.cursor()
-print(conn)
-#conn.close()
-
-insert_blob_query = "INSERT INTO olist (name, file) VALUES (%s, %s)"
-
-insert_args = (file_name, data)
+import logging
+import datetime
 
 def insert_blob(): 
     """
@@ -48,12 +26,12 @@ def insert_blob():
         print("Error:", e)                   # errno, sqlstate, msg values
         s = str(e)
         print("Error:", s)                   # errno, sqlstate, msg values
+        raise SystemExit
     finally:
         olist_id = cursor.lastrowid
         cursor.close()
     return olist_id 
         # conn.close()
-
 
 def query_simbad(ra, dec):
     """
@@ -101,67 +79,108 @@ def query_simbad(ra, dec):
     simbad_results['objects'] = objects
     return simbad_results
 
-new_data = [] 
-split_by_line = data.split('\n')
-olist_id = insert_blob()
-for line in split_by_line:
-    if len(line.split(" ")) < 4:
-        continue
-    if line != "":
-        if str(line)[0] == "H":
-            comment = False
-            #Split line between actual content and comments
-            if "#" in line:
-                line_split = line.split("#")
-                line = line_split[0]
-                comment = line_split[1]
-                print("comment: " + comment)
-            #Replace "HR 1231" with "HR_1231"
-            if str(line[:2]) == "HR":
-                line = line[:2] + "_" + line[3:]
-            #Strip double spaces and replace with single space
-            line = ' '.join(line.split())
-            #Grab only the first ten entries, separated by spaces in olist files
-            line_split = line.split(" ")
-            first_nine_entries = line_split[:9]
-            
-            # Sometimes, olist entry will have some missing data, 
-            # append the list with empty strings so indexing doesn't become inconsistent
-            empty_columns = 9 - len(first_nine_entries)
-            for i in range(empty_columns):
-                first_nine_entries.append("")
-                
-            #Grab RA and Dec to retrieve SIMBAD ID to insert into column 11
-            ra = first_nine_entries[5] 
-            dec = first_nine_entries[6]
+if __name__ == "__main__":
+    valEror = False 
+    # Opens a dialog box for user to select .olist file to convert 
+    Tk().withdraw() 
+    file_name = askopenfilename(filetypes=[("Olist Files", "*.olist")]) 
+    head, tail = os.path.split(file_name)
+    print(file_name)
 
-            first_nine_entries = "|".join(first_nine_entries)
-            #Replace spaces in the tenth column/entry with underscores
-            tenth_entry = " ".join(line_split[9:])
-            tenth_entry = tenth_entry.replace(" ", "_")
+    with open(file_name) as file:
+        data = file.read()
 
-            simbad_results = query_simbad(ra, dec)
-            #Join first 9 entries with 10th entry, the simbad objects, and the simbad range creating the essential line
-            line = first_nine_entries + "|" + tenth_entry + "|" + str(simbad_results['objects']) + "|" + str(simbad_results['radius'])
+    # Database Configurations 
+    conn = mysql.connector.connect(
+        host="localhost",
+        db="speckle_imaging",
+        user="root",
+        passwd="password"
+    )
+    cursor = conn.cursor()
+    print(conn)
+    # conn.close()
+
+    # Logging configuration
+    currentDT = datetime.datetime.now()
+    logging.basicConfig(filename='olist.log',level=logging.DEBUG, format='%(asctime)s - %(message)s')
+    # Queries
+    insert_blob_query = "INSERT INTO olist (name, file) VALUES (%s, %s)"
+    insert_args = (tail, data)
+
+    # Extraction of .olist file entries into python lists 
+    new_data = []
+    split_by_line = data.split('\n')
+    olist_id = insert_blob()
+    i = 1
+    for line in split_by_line:
+        try:
+            print(str(i))
             print(line)
-            #Add line and reformatted comments back into the dataset
-            if not comment:
-                #Once again, strip any double spaces from joining the other entries
-                line = re.sub("\s\s+", " ", line)
-                line = line + "|" + str(olist_id)
-            # else:
-            #     line = line + "|" + comment
-            #     line = re.sub("\s\s+", " ", line)
-            new_data.append(line)
-            print(line)
+            i += 1
+            if len(line.split(" ")) < 4:
+                continue
+            if line != "":
+                if str(line)[0] == "H":
+                    comment = False
+                    #Split line between actual content and comments
+                    if "#" in line:
+                        line_split = line.split("#")
+                        line = line_split[0]
+                        comment = line_split[1]
+                        print("comment: " + comment)
+                    #Replace "HR 1231" with "HR_1231"
+                    if str(line[:2]) == "HR":
+                        line = line[:2] + "_" + line[3:]
+                    #Strip double spaces and replace with single space
+                    line = ' '.join(line.split())
+                    #Grab only the first ten entries, separated by spaces in olist files
+                    line_split = line.split(" ")
+                    first_nine_entries = line_split[:9]
+                    
+                    # Sometimes, olist entry will have some missing data, 
+                    # append the list with empty strings so indexing doesn't become inconsistent
+                    empty_columns = 9 - len(first_nine_entries)
+                    for i in range(empty_columns):
+                        first_nine_entries.append("")
+                        
+                    #Grab RA and Dec to retrieve SIMBAD ID to insert into column 11
+                    ra = first_nine_entries[5] 
+                    dec = first_nine_entries[6]
 
-with open("newbatch" + tail + ".csv", 'w+') as new_file:
-    #write header
-    header = "star_id|fits_file|time|blue_gain|red_gain|right_asc|dec|epoch|mag|program_id|objects|search_radius|olist_id"
-    new_file.write(header + "\n")
-    for line in new_data:
-        new_file.write(line + "\n")
-        print("hello")
-    print("Done writing file")
+                    first_nine_entries = "|".join(first_nine_entries)
+                    #Replace spaces in the tenth column/entry with underscores
+                    tenth_entry = " ".join(line_split[9:])
+                    tenth_entry = tenth_entry.replace(" ", "_")
 
-conn.close()
+                    simbad_results = query_simbad(ra, dec)
+                    #Join first 9 entries with 10th entry, the simbad objects, and the simbad range creating the essential line
+                    line = first_nine_entries + "|" + tenth_entry + "|" + str(simbad_results['objects']) + "|" + str(simbad_results['radius'])
+                    print(line)
+                    #Add line and reformatted comments back into the dataset
+                    if not comment:
+                        #Once again, strip any double spaces from joining the other entries
+                        line = re.sub("\s\s+", " ", line)
+                        line = line + "|" + str(olist_id)
+                    # else:
+                    #     line = line + "|" + comment
+                    #     line = re.sub("\s\s+", " ", line)
+                    new_data.append(line)
+                    print(line)
+        except ValueError as e:
+            valEror = True
+            print("Incorrect data format has been encountered") 
+            logging.debug("Value Error: " + str(e) + " - File: " + tail + " - Line: " + line)
+
+    # Write .csv file with python lists 
+    with open("newbatch" + tail + ".csv", 'w+') as new_file:
+        #write header
+        header = "star_id|fits_file|time|blue_gain|red_gain|right_asc|dec|epoch|mag|program_id|objects|search_radius|olist_id"
+        new_file.write(header + "\n")
+        for line in new_data:
+            new_file.write(line + "\n")
+            print("Row written...")
+        print("Done writing file.")
+    if valEror:
+        print("THERE WAS AN EROR CHECK LOGS")
+    conn.close()
