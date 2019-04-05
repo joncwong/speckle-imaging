@@ -1,6 +1,7 @@
 from tkinter import Tk
 from tkinter.filedialog import askopenfilename
-import csv 
+from tkinter import messagebox
+import csv
 import re
 import os
 from astroquery.simbad import Simbad
@@ -10,12 +11,20 @@ from astropy.coordinates import SkyCoord
 import mysql.connector
 import logging
 import datetime
+import warnings
 
-def insert_blob(): 
+
+def fxn():
     """
-        Inserts opened olist file as a blob into database 
+        Suppress astropy query warnings from logs
     """
-    try: 
+    warnings.warn("deprecated", DeprecationWarning)
+
+def insert_blob():
+    """
+        Inserts opened olist file as a blob into database
+    """
+    try:
         cursor = conn.cursor()
         cursor.execute(insert_blob_query, insert_args)
         conn.commit()
@@ -42,42 +51,45 @@ def query_simbad(ra, dec):
         Returns:
         dict: Contains key/values with valuable SIMBAD query information
     """
-    simbad_results = {} 
-    objects = {}
-    customSimbad = Simbad()
-    customSimbad.add_votable_fields('otype')
-    coord = SkyCoord(ra + dec, unit=(u.hourangle, u.deg))
-    result_len = 0
-    radius = 0.00028
-
-    while result_len == 0: 
-        try:
-            results = customSimbad.query_region(coord, radius=radius * u.deg)
-            result_len = len(results)
-            #print("num of results at " + str(radius) + " radius: " + str(result_len))
-            radius = radius * 2
-        except:
-            print("EXCEPTION")
-            radius = radius * 2
-            print("RADIUS: " + str(radius))
-            if radius == 3: 
-                print("RADIUS IS 3")
+    fxn()
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        fxn()
+        simbad_results = {} 
+        objects = {}
+        customSimbad = Simbad()
+        customSimbad.add_votable_fields('otype')
+        coord = SkyCoord(ra + dec, unit=(u.hourangle, u.deg))
+        result_len = 0
+        radius = 0.00028
+        while result_len == 0: 
+            try:
+                results = customSimbad.query_region(coord, radius=radius * u.deg)
+                result_len = len(results)
+                #print("num of results at " + str(radius) + " radius: " + str(result_len))
+                radius = radius * 2
+            except:
+                print("EXCEPTION")
+                radius = radius * 2
+                print("RADIUS: " + str(radius))
+                if radius == 3: 
+                    print("RADIUS IS 3")
+                    results = None
+                    break
+                continue
+            if radius == 5:
+                print("RADIUS IS 3 V2")
                 results = None
                 break
-            continue
-        if radius == 5:
-            print("RADIUS IS 3 V2")
-            results = None
-            break
-    
-    for row in results:
-        object_id = row['MAIN_ID'].decode('utf-8')
-        object_type = row['OTYPE'].decode('utf-8')
-        objects[object_id] = object_type
+        
+        for row in results:
+            object_id = row['MAIN_ID'].decode('utf-8')
+            object_type = row['OTYPE'].decode('utf-8')
+            objects[object_id] = object_type
 
-    simbad_results['radius'] = round(radius, 5)
-    simbad_results['objects'] = objects
-    return simbad_results
+        simbad_results['radius'] = round(radius, 5)
+        simbad_results['objects'] = objects
+        return simbad_results
 
 if __name__ == "__main__":
     valEror = False 
@@ -102,8 +114,13 @@ if __name__ == "__main__":
     # conn.close()
 
     # Logging configuration
-    currentDT = datetime.datetime.now()
-    logging.basicConfig(filename='olist.log',level=logging.DEBUG, format='%(asctime)s - %(message)s')
+    logger = logging.getLogger('audit')
+    handler = logging.FileHandler('olist.log')
+    handler.setLevel(logging.CRITICAL)
+    logger.addHandler(handler)
+    
+    # logging.basicConfig(filename='olist.log',level=logging.INFO, format='%(asctime)s - %(message)s')
+    # logging.captureWarnings(False)
     # Queries
     insert_blob_query = "INSERT INTO olist (name, file) VALUES (%s, %s)"
     insert_args = (tail, data)
@@ -158,10 +175,10 @@ if __name__ == "__main__":
                     line = first_nine_entries + "|" + tenth_entry + "|" + str(simbad_results['objects']) + "|" + str(simbad_results['radius'])
                     print(line)
                     #Add line and reformatted comments back into the dataset
-                    if not comment:
+                    #if not comment:
                         #Once again, strip any double spaces from joining the other entries
-                        line = re.sub("\s\s+", " ", line)
-                        line = line + "|" + str(olist_id)
+                    line = re.sub("\s\s+", " ", line)
+                    line = line + "|" + str(olist_id)
                     # else:
                     #     line = line + "|" + comment
                     #     line = re.sub("\s\s+", " ", line)
@@ -170,7 +187,7 @@ if __name__ == "__main__":
         except ValueError as e:
             valEror = True
             print("Incorrect data format has been encountered") 
-            logging.debug("Value Error: " + str(e) + " - File: " + tail + " - Line: " + line)
+            logger.critical("Value Error: " + str(e) + " - File: " + tail + " - Line: " + line)
 
     # Write .csv file with python lists 
     with open("newbatch" + tail + ".csv", 'w+') as new_file:
@@ -181,6 +198,10 @@ if __name__ == "__main__":
             new_file.write(line + "\n")
             print("Row written...")
         print("Done writing file.")
+
     if valEror:
-        print("THERE WAS AN EROR CHECK LOGS")
+        Tk().deiconify()
+        messagebox.showwarning("Warning", "A value occured, please check olist.log and manually audit the data")
+        print("THERE WAS AN ERROR CHECK LOGS")
+
     conn.close()
