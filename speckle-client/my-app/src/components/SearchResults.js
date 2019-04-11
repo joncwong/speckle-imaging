@@ -5,6 +5,9 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
+//import PropTypes from 'prop-types';
+import { Tab, Tabs} from '@material-ui/core';
+//import Typography from '@material-ui/core/Typography';
 
 const divStyle = {
     marginTop: '20px',
@@ -12,6 +15,7 @@ const divStyle = {
     marginLeft: '30px',
     marginBottom: '30px'
   };
+
   
 class SearchResults extends Component {
 
@@ -19,7 +23,8 @@ class SearchResults extends Component {
         super(props)
         this.state = {
             searchResults: [],
-            display: false
+            display: false,
+            currentTab: 'searchResults'
         }
         this.updateResults = this.updateResults.bind(this)
         this.formatResults = this.formatResults.bind(this)
@@ -40,10 +45,26 @@ class SearchResults extends Component {
         console.log(this.state['searchResults'])
     }
 
+    changeTab = (event, value) => {
+        console.log("I AM BEING CLICKED")
+        this.setState({ currentTab: value });
+      };
+
     formatResults() {
         if (this.state['display']) {
             return (
                 <div style={divStyle}>
+                <Tabs
+                    value={this.state.currentTab}
+                    onChange={this.changeTab}
+                    indicatorColor="primary"
+                    textColor="primary"
+                    centered>
+                    <Tab value="searchResults" label="Search Results" />
+                    <Tab value="olistFile" label="Original Olist File" />
+                </Tabs>
+
+                {this.state.currentTab==='searchResults' && 
                 <Paper style={{maxHeight: 700, overflow:'auto'}}>
                     <Table>
                         <TableHead>
@@ -58,7 +79,6 @@ class SearchResults extends Component {
                                 <TableCell align="right">Epoch</TableCell>
                                 <TableCell align="right">Magnitude</TableCell>
                                 <TableCell align="right">Program ID</TableCell>
-                                <TableCell align="right">Comment</TableCell>
                                 <TableCell align="right">Objects</TableCell>
                                 <TableCell align="right">Radius</TableCell>
                             </TableRow>
@@ -77,7 +97,6 @@ class SearchResults extends Component {
                                 <TableCell align="right">{row.epoch}</TableCell>
                                 <TableCell align="right">{row.mag}</TableCell>
                                 <TableCell align="right">{row.program_id}</TableCell>
-                                <TableCell align="right">{row.comment}</TableCell>
                                 <TableCell align="right">{row.objects}</TableCell>
                                 <TableCell align="right">{row.search_radius}</TableCell>
                             </TableRow>
@@ -85,7 +104,13 @@ class SearchResults extends Component {
                         })}
                         </TableBody>
                     </Table>
-                </Paper>
+                </Paper>}
+
+                {this.state.currentTab==='olistFile' && 
+                <Paper style={{maxHeight: 700, overflow:'auto'}}>
+                    
+                </Paper>}
+
                 </div>
             )
         }

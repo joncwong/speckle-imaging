@@ -6,7 +6,7 @@ class KeyLegend extends Component {
       
       const footerStyle = {
         "position": "static",
-        "text-align": "center"
+        "textAlign": "center"
       }
 
       return (
