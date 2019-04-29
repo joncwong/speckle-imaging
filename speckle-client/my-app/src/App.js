@@ -5,6 +5,10 @@ import SearchRadio from './components/SearchRadio';
 import KeyLegend from './components/KeyLegend';
 import './App.css';
 
+const bodyStyle = {
+  // KEEP TWEEKING THIS
+  height: "90vh"
+}
 class App extends Component {
 
   constructor(props) {
@@ -23,10 +27,12 @@ class App extends Component {
   render() {
     return (
       <div className="App">
-        <h1>Speckle Imaging Database</h1>
-        <SearchBar ref={this.searchBar} passResults={this.passResults} setDisplay={this.setDisplay}></SearchBar>
-        <SearchRadio setSearch={this.setSearch}></SearchRadio>
-        <SearchResults ref={this.formattedResults}></SearchResults>
+        <div style = { bodyStyle }>
+          <h1>Speckle Imaging Database</h1>
+          <SearchBar ref={this.searchBar} passResults={this.passResults} setDisplay={this.setDisplay}></SearchBar>
+          <SearchRadio setSearch={this.setSearch}></SearchRadio>
+          <SearchResults ref={this.formattedResults}></SearchResults>
+        </div>
         <KeyLegend></KeyLegend>
       </div>
     );

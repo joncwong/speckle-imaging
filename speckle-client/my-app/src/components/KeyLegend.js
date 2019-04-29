@@ -5,13 +5,14 @@ class KeyLegend extends Component {
   render() {
       
       const footerStyle = {
-        "position": "static",
+        height: '60px',
+        position: "static",
         "textAlign": "center"
       }
 
       return (
         <footer style={footerStyle}>
-            <p> Please refer to the following <a href="http://cds.u-strasbg.fr/cgi-bin/Otype?X">Key Legend</a> to decipher the Object Keys.</p>
+            <p> Please refer to the following <a href="http://simbad.u-strasbg.fr/simbad/sim-display?data=otypes" target="_blank">Key Legend</a> to decipher the Object Keys.</p>
         </footer>
       )
   }

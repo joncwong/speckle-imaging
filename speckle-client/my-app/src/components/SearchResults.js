@@ -16,7 +16,6 @@ const divStyle = {
     marginBottom: '30px'
   };
 
-  
 class SearchResults extends Component {
 
     constructor(props) {
@@ -24,7 +23,9 @@ class SearchResults extends Component {
         this.state = {
             searchResults: [],
             display: false,
-            currentTab: 'searchResults'
+            currentTab: 'searchResults',
+            olistFile: '',
+            transformedOlist: []
         }
         this.updateResults = this.updateResults.bind(this)
         this.formatResults = this.formatResults.bind(this)
@@ -37,12 +38,28 @@ class SearchResults extends Component {
             </div>
         )
     }
-    
+
+    transformOlist() {
+        console.log("fasdjflkajsdflk")
+        let olistList = this.state['olistFile'].split('\n')
+        let tempList = []
+        olistList.forEach(function(item) {
+            tempList.push(item)
+        });
+        this.setState({
+            transformedOlist: tempList
+        });
+    }
+
     updateResults(data) {
         this.setState({
-            searchResults: data
+            searchResults: data.data,
+            olistFile: data.olistFile
         })
-        console.log(this.state['searchResults'])
+        this.transformOlist()
+        // console.log(data)
+        // console.log(this.state['searchResults'])
+        // console.log(this.state['olistFile'])
     }
 
     changeTab = (event, value) => {
@@ -65,7 +82,7 @@ class SearchResults extends Component {
                 </Tabs>
 
                 {this.state.currentTab==='searchResults' && 
-                <Paper style={{maxHeight: 700, overflow:'auto'}}>
+                <Paper style={{maxHeight: 570, overflow:'auto'}}>
                     <Table>
                         <TableHead>
                             <TableRow>
@@ -107,8 +124,12 @@ class SearchResults extends Component {
                 </Paper>}
 
                 {this.state.currentTab==='olistFile' && 
-                <Paper style={{maxHeight: 700, overflow:'auto'}}>
-                    
+                <Paper style={{maxHeight: 570, overflow:'auto'}}>
+                    {this.state.transformedOlist.map(line => {
+                        return (
+                            <p>{line}</p>
+                        );
+                    })}
                 </Paper>}
 
                 </div>

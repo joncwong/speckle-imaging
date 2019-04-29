@@ -8,6 +8,7 @@ class SearchBar extends Component {
     this.state = {
       input: '',
       results: '',
+      file: '',
       searchType: 'coordinate',
       searchLabel: 'Search via a Star\'s Coordinate',
       searchPlaceHolder: 'e.g 23:59:22.9 +55:49:27'
@@ -38,8 +39,9 @@ class SearchBar extends Component {
           console.log(error);
       });
       response.then( body => {
+        console.log(body)
         this.props.setDisplay(body.valid)
-        return body.data
+        return body;
       })
       .then(results => this.setResults(results))
     }

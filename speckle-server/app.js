@@ -50,9 +50,38 @@ app.get('/coordinate/:starCoord', function (req, res) {
   let rightAsc = starCoordSplit[0];
   let dec = starCoordSplit[1];
   let validQuery = false;
+  let query = `SELECT metadata.star_id, 
+                      metadata.fits_file,
+                      metadata.time,
+                      metadata.blue_gain,
+                      metadata.red_gain,
+                      metadata.right_asc,
+                      metadata.dec,
+                      metadata.epoch,
+                      metadata.mag,
+                      metadata.program_id,
+                      metadata.objects,
+                      metadata.search_radius,
+                      olist.name,
+                      olist.olist_id,
+                      olist.file 
+                      FROM metadata 
+                      INNER JOIN olist ON metadata.olist_id = olist.olist_id
+                      WHERE metadata.right_asc = ? AND metadata.dec= ?`
   console.log("rightAsc: " + rightAsc); // Placeholder 
   console.log("dec: " + dec);
-  con.query('SELECT * FROM olistv2 WHERE olistv2.right_asc=\'' + rightAsc + '\'' + 'AND olistv2.dec=\'' + dec + '\'', function (error, results, fields) {
+  // con.query('SELECT * FROM metadata, olist WHERE metadata.right_asc=\'' + rightAsc + '\'' + 'AND metadata.dec=\'' + dec + '\'', function (error, results, fields) {
+  //   if (error) throw error;
+  //   if (!results === undefined && result.length == 0) {
+  //     console.log()
+  //   }
+  //   if (!results === undefined || !results.length == 0) {
+  //     validQuery = true;
+  //   }
+  //   return res.json({ error: false, data: results, valid: validQuery });
+  // });
+
+  con.query(query, [rightAsc, dec], function (error, results, fields) {
     if (error) throw error;
     if (!results === undefined && result.length == 0) {
       console.log()
@@ -60,8 +89,17 @@ app.get('/coordinate/:starCoord', function (req, res) {
     if (!results === undefined || !results.length == 0) {
       validQuery = true;
     }
-    return res.json({ error: false, data: results, valid: validQuery });
+    olistFileString = results[0]['file'].toString('utf8')
+    //console.log(results[0]['file'].toString('utf8'))
+    for (var key in results) {
+      //console.log(results[key]['file'])
+      delete results[key]['file']
+      //console.log(results[key]['file'])
+      //console.log(results[key])
+    }
+    return res.json({ error: false, data: results, olistFile: olistFileString, valid: validQuery });
   });
+
 });
 
 //CLONED above endpoint for now, change later to reflect an identifier query 
@@ -81,5 +119,7 @@ app.get('/identifier/:starCoord', function (req, res) {
     return res.json({ error: false, data: results, valid: validQuery });
   });
 });
+
+
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))
