@@ -10,6 +10,7 @@ class SearchBar extends Component {
       results: '',
       file: '',
       searchType: 'coordinate',
+      searchDisabled: false,
       searchLabel: 'Search via a Star\'s Coordinate',
       searchPlaceHolder: 'e.g 23:59:22.9 +55:49:27'
     }
@@ -63,6 +64,7 @@ class SearchBar extends Component {
           id="filled-full-width"
           label={this.state['searchLabel']}
           style={{ width: 600}}
+          disabled={this.state['searchDisabled']}
           placeholder={this.state['searchPlaceHolder']}
           margin="normal"
           variant="filled"

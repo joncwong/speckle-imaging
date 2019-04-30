@@ -3,13 +3,16 @@ import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormControl from '@material-ui/core/FormControl';
+import Input from '@material-ui/core/Input';
+import Button from '@material-ui/core/Button';
 
-class SearchRadio extends Component {
+class SearchOptions extends Component {
 
   constructor(props) {
     super(props)
     this.state = {
-        selectedOption: 'coordinate'
+        selectedOption: 'coordinate',
+        batchDisabled: true
     }
   }
 
@@ -22,30 +25,54 @@ class SearchRadio extends Component {
   };
 
   render() {
+    
     return (
         <FormControl component="fieldset">
-            <RadioGroup
+          <RadioGroup
                 aria-label="position"
                 value={this.state.value}
                 onChange={this.handleChange}
                 row>
-                <FormControlLabel
+            <FormControlLabel
                 value="coordinate"
                 control={<Radio color="primary" checked={this.state.selectedOption === 'coordinate'}/>}
                 label="Coordinate Search"
                 labelPlacement="start"
                 />
-                <FormControlLabel
+            <FormControlLabel
                 value="identifier"
                 control={<Radio color="primary" checked={this.state.selectedOption === 'identifier'}/>}
                 label="Identifier Search"
                 labelPlacement="start"
                 />
-            </RadioGroup>
+            <FormControlLabel
+                value="batch"
+                control={<Radio color="primary" checked={this.state.selectedOption === 'batch'}/>}
+                label="Batch File Search"
+                labelPlacement="start"
+                />
+          </RadioGroup>
+          <div 
+            style={{display:'inline-block'}}>
+            <input
+              disabled={this.state['batchDisabled']}
+              accept="image/*"
+              id="outlined-button-file"
+              type="file"
+            />
+            <label htmlFor="">
+              <Button 
+                disabled={this.state['batchDisabled']}
+                variant="outlined" 
+                component="span">
+                  Batch Upload
+              </Button>
+            </label>
+          </div>
         </FormControl>
     )
   }
 
 }
 
-export default SearchRadio;
+export default SearchOptions;
