@@ -40,34 +40,32 @@ class SearchResults extends Component {
     }
 
     transformOlist() {
-        console.log("fasdjflkajsdflk")
-        let olistList = this.state['olistFile'].split('\n')
-        let tempList = []
-        olistList.forEach(function(item) {
-            tempList.push(item)
-        });
-        this.setState({
-            transformedOlist: tempList
-        });
+            let olistList = this.state['olistFile'].split('\n')
+            let tempList = []
+            olistList.forEach(function(item) {
+                tempList.push(item)
+            });
+            this.setState({
+                transformedOlist: tempList
+            });
     }
 
     updateResults(data) {
-        this.setState({
-            searchResults: data.data,
-            olistFile: data.olistFile
-        })
+        if (data.data.length !== undefined) {
+            this.setState({
+                searchResults: data.data,
+                olistFile: data.olistFile
+            })
+        }
         this.transformOlist()
-        // console.log(data)
-        // console.log(this.state['searchResults'])
-        // console.log(this.state['olistFile'])
     }
 
     changeTab = (event, value) => {
-        console.log("I AM BEING CLICKED")
         this.setState({ currentTab: value });
       };
 
     formatResults() {
+        // console.log('searchResults: ' + this.state['searchResults'])
         if (this.state['display']) {
             return (
                 <div style={divStyle}>

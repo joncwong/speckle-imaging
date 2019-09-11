@@ -15,33 +15,23 @@ var con = mysql.createConnection({
   database: process.env.DB_NAME
 });
 
-con.connect(function(err) {
+con.connect(function (err) {
   if (err) throw err;
   console.log("Connected!");
 });
 
 // Root 
 app.get('/', function (req, res) {
-  res.send('Root endpoint, nothing interesting here')
+  res.send('HEALTHY')
 })
 
 // Retrieve all olist
 app.get('/olist', function (req, res) {
   con.query('SELECT * FROM olist', function (error, results, fields) {
-      if (error) throw error;
-      return res.send({ error: false, data: results, message: 'olist files.' });
+    if (error) throw error;
+    return res.send({data: results, message: 'olist files.' });
   });
 });
-
-// Retreieve specific olist data with specified starId 
-// DEPRECATED, THIS ENDPOINT IS NO LONGER NEEDED 
-// app.get('/olist/:starId', function (req, res) {
-//   let starId = req.params.starId;
-//   con.query('SELECT * FROM dec14raw WHERE star_id=\'' + starId + '\'', function (error, results, fields) {
-//       if (error) throw error;
-//       return res.json({ error: false, data: results, message: 'olist files.' });
-//   });
-// });
 
 // Retreieve metadata of star via coordinate search 
 app.get('/coordinate/:starCoord', function (req, res) {
@@ -50,44 +40,66 @@ app.get('/coordinate/:starCoord', function (req, res) {
   let rightAsc = starCoordSplit[0];
   let dec = starCoordSplit[1];
   let validQuery = false;
-  let query = `SELECT metadata.star_id, 
-                      metadata.fits_file,
-                      metadata.time,
-                      metadata.blue_gain,
-                      metadata.red_gain,
-                      metadata.right_asc,
-                      metadata.dec,
-                      metadata.epoch,
-                      metadata.mag,
-                      metadata.program_id,
-                      metadata.objects,
-                      metadata.search_radius,
-                      olist.name,
-                      olist.olist_id,
-                      olist.file 
+  let query = `SELECT metadata.star_id, metadata.fits_file, metadata.time,
+                      metadata.blue_gain, metadata.red_gain, metadata.right_asc,
+                      metadata.dec, metadata.epoch, metadata.mag, metadata.program_id,
+                      metadata.objects, metadata.search_radius, 
+                      olist.name, olist.olist_id, olist.file 
                       FROM metadata 
                       INNER JOIN olist ON metadata.olist_id = olist.olist_id
                       WHERE metadata.right_asc = ? AND metadata.dec= ?`
   console.log("rightAsc: " + rightAsc); // Placeholder 
   console.log("dec: " + dec);
-  // con.query('SELECT * FROM metadata, olist WHERE metadata.right_asc=\'' + rightAsc + '\'' + 'AND metadata.dec=\'' + dec + '\'', function (error, results, fields) {
-  //   if (error) throw error;
-  //   if (!results === undefined && result.length == 0) {
-  //     console.log()
-  //   }
-  //   if (!results === undefined || !results.length == 0) {
-  //     validQuery = true;
-  //   }
-  //   return res.json({ error: false, data: results, valid: validQuery });
-  // });
 
   con.query(query, [rightAsc, dec], function (error, results, fields) {
-    if (error) throw error;
-    if (!results === undefined && result.length == 0) {
-      console.log()
+    if (error) {
+      return res.json({data: {}, olistFile:"", valid: false})
     }
+    // if (!results === undefined && result.length == 0) {
+    //   console.log()
+    // }
     if (!results === undefined || !results.length == 0) {
       validQuery = true;
+    }
+    else {
+      return res.json({data: {}, olistFile:"", valid: false})
+    }
+    olistFileString = results[0]['file'].toString('utf8')
+    //console.log(results[0]['file'].toString('utf8'))
+    for (var key in results) {
+      delete results[key]['file']
+    }
+    return res.json({data: results, olistFile: olistFileString, valid: validQuery });
+  });
+
+});
+
+//CLONED above endpoint for now, change later to reflect an identifier query 
+app.get('/identifier/:starID', function (req, res) {
+  let starID = req.params.starID;
+  let validQuery = false;
+  console.log("identifier: " + starID);
+  let query = `SELECT metadata.star_id, metadata.fits_file, metadata.time,
+                metadata.blue_gain, metadata.red_gain, metadata.right_asc,
+                metadata.dec, metadata.epoch, metadata.mag, metadata.program_id,
+                metadata.objects, metadata.search_radius, 
+                olist.name, olist.olist_id, olist.file 
+                FROM metadata 
+                INNER JOIN olist ON metadata.olist_id = olist.olist_id
+                WHERE metadata.star_id = ?`
+
+  con.query(query, [starID], function (error, results, fields) {
+    if (error) {
+      return res.json({data: {}, olistFile:"", valid: false})
+    }
+    // if (!results === undefined && result.length == 0) {
+    //   console.log()
+    // }
+    if (!results === undefined || !results.length == 0) {
+      validQuery = true;
+    }
+    else {
+      return res.json({data: {}, olistFile:"", valid: false})
     }
     olistFileString = results[0]['file'].toString('utf8')
     //console.log(results[0]['file'].toString('utf8'))
@@ -97,29 +109,8 @@ app.get('/coordinate/:starCoord', function (req, res) {
       //console.log(results[key]['file'])
       //console.log(results[key])
     }
-    return res.json({ error: false, data: results, olistFile: olistFileString, valid: validQuery });
-  });
-
-});
-
-//CLONED above endpoint for now, change later to reflect an identifier query 
-app.get('/identifier/:starCoord', function (req, res) {
-  let starCoord = req.params.starCoord;
-  let starCoordSplit = starCoord.split(" ");
-  let rightAsc = starCoordSplit[0];
-  let dec = starCoordSplit[1];
-  let validQuery = false;
-  console.log("rightAsc: " + rightAsc); // Placeholder 
-  console.log("dec: " + dec);
-  con.query('SELECT * FROM olistv2 WHERE olistv2.right_asc=\'' + rightAsc + '\'' + 'AND olistv2.dec=\'' + dec + '\'', function (error, results, fields) {
-    if (error) throw error;
-    if (!results === undefined || !results.length == 0) {
-      validQuery = true;
-    }
-    return res.json({ error: false, data: results, valid: validQuery });
+    return res.json({data: results, olistFile: olistFileString, valid: validQuery });
   });
 });
-
-
 
 app.listen(port, () => console.log(`Example app listening on port ${port}!`))

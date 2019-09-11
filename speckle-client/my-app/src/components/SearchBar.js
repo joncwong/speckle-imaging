@@ -7,7 +7,6 @@ class SearchBar extends Component {
     super(props)
     this.state = {
       input: '',
-      results: '',
       file: '',
       searchType: 'coordinate',
       searchDisabled: false,
@@ -25,7 +24,7 @@ class SearchBar extends Component {
       let searchInput = this.state['input'];
       if (searchInput === '') {
         this.props.setDisplay(false)
-        console.log("Empty search query.. aborted");
+        //console.log("Empty search query.. aborted");
         return
       }
       let response = fetch(`http://localhost:8080/${this.state['searchType']}/${searchInput}`)
@@ -40,18 +39,14 @@ class SearchBar extends Component {
           console.log(error);
       });
       response.then( body => {
-        console.log(body)
-        this.props.setDisplay(body.valid)
-        return body;
+          this.props.setDisplay(body.valid)
+          return body;
       })
       .then(results => this.setResults(results))
     }
   }
 
   setResults(data) {
-    this.setState({
-      results: data
-    })
     this.props.passResults(data)
   }
   
