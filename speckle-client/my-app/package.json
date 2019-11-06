@@ -10,7 +10,7 @@
     "material-ui-search-bar-enhanced": "^0.5.1",
     "react": "^16.3.0",
     "react-dom": "^16.5.2",
-    "react-scripts": "1.1.5",
+    "react-scripts": "^3.2.0",
     "react-swipeable-views": "^0.13.0"
   },
   "scripts": {
@@ -18,5 +18,17 @@
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   }
 }
