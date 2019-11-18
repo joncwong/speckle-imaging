@@ -131,8 +131,8 @@ if __name__ == "__main__":
     conn = mysql.connector.connect(
         host="localhost",
         db="speckle",
-        user="",
-        passwd=""
+        user="speckle",
+        passwd="speckle"
     )
     cursor = conn.cursor()
     print(conn)
