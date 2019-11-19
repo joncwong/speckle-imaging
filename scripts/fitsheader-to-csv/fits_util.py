@@ -26,7 +26,8 @@ def is_dir_or_fits_file(path):
 
 def find_all_fits_files(path):
     '''
-        Returns a list of all the files in a given path
+        Recursively searches and returns a list of all the files (POSIX format)
+        in a given path.
     '''
     fits_file_list = []
 
