@@ -16,19 +16,20 @@ class FitsReader:
         self.headers = headers
         self.output_file = output_file
 
-    def convert_next(self):
-        with open(self.output_file, 'w+') as fits_csv:
-            fits_csv_writer = csv.writer(fits_csv, delimiter='|')
-            curr_fits_file = next(self.fits_files)
+    # TODO (joncwong): Remove completely, will only support converting an entire dir rather than converting fits by fits
+    # def convert_next(self):
+    #     with open(self.output_file, 'w+') as fits_csv:
+    #         fits_csv_writer = csv.writer(fits_csv, delimiter='|')
+    #         curr_fits_file = next(self.fits_files)
 
-            with fits.open(curr_fits_file) as fits_file:
-                fits_header = fits_file[0].header
-                curr_row = []
-                for header in self.headers:
-                    print(fits_header[header])
-                    # curr_row.append
+    #         with fits.open(curr_fits_file) as fits_file:
+    #             fits_header = fits_file[0].header
+    #             curr_row = []
+    #             for header in self.headers:
+    #                 print(fits_header[header])
+    #                 # curr_row.append
                 
-            # fits_csv_writer.writerow(curr_row)
+    #         # fits_csv_writer.writerow(curr_row)
 
     def convert_all(self):
         print('////')
