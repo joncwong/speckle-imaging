@@ -12,9 +12,9 @@ def is_fits_file(path):
         Example 2:
             is_fits_file('hello.txt') -- Returns: False
     '''
-    if os.path.isdir(path):
+    if not os.path.isdir(path):
         _, ext = os.path.splitext(path)
-        if ext == "fits":
+        if ext == ".fits":
             return True
     return False
 
@@ -26,17 +26,22 @@ def is_fits_or_dir(path):
     return is_fits_file(path) or os.path.isdir(path)
 
 
-def aggregate_fits_files(path_list):
+def aggregate_fits_files(path_arg):
     '''
         Recursively searches and returns a list of all the files (POSIX format)
         in a given path.
     '''
+
     fits_files = []
+    dir_path = os.path.dirname(__file__)
 
-    # Filter out any invalid or nonexistent path names
-    valid_paths = filter(is_fits_or_dir, path_list)
+    if is_fits_file(path_arg):
+        raise Exception('Please provide a directory path, not a FITS file.')
 
-    for fits_file in pathlib.Path(valid_paths).glob('**/*.fits'):
-        fits_files.append(fits_file)
+    path = os.path.join(dir_path, path_arg)
+
+    for fits_file in pathlib.Path(path).glob('**/*.fits'):
+        fits_file_path = os.path.join(dir_path, str(fits_file))
+        fits_files.append(fits_file_path)
 
     return fits_files
