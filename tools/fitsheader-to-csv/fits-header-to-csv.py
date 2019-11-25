@@ -1,9 +1,7 @@
 from astropy.io import fits
-import argparse
+from termcolor import colored
+import argparse, textwrap, sys, csv, os, re
 import fits_util
-import sys
-import csv
-import os
 
 
 class FitsReader:
@@ -15,21 +13,6 @@ class FitsReader:
         self.fits_files = fits_files
         self.headers = headers
         self.output_file = output_file
-
-    # TODO (joncwong): Remove completely, will only support converting an entire dir rather than converting fits by fits
-    # def convert_next(self):
-    #     with open(self.output_file, 'w+') as fits_csv:
-    #         fits_csv_writer = csv.writer(fits_csv, delimiter='|')
-    #         curr_fits_file = next(self.fits_files)
-
-    #         with fits.open(curr_fits_file) as fits_file:
-    #             fits_header = fits_file[0].header
-    #             curr_row = []
-    #             for header in self.headers:
-    #                 print(fits_header[header])
-    #                 # curr_row.append
-                
-    #         # fits_csv_writer.writerow(curr_row)
 
     def convert_all(self):
         print('////')
@@ -54,22 +37,53 @@ def get_args():
     return args
 
 
+def extract_headers(headers_str):
+    '''
+        Return a list of headers from a comma separated string of headers.
+
+        Example: extract_headers('hello,bye,aw.l,j%c')
+                 Returns ['hello', 'bye']
+    '''
+    header_list = headers_str.split(',')
+    if len(header_list) <= 1:
+        print(colored('Too few headers provided. Please try again.', 'red'))
+        raise Exception('ScarceHeaderException')
+
+    header_regex = re.compile(r'^\w+$')
+    filtered_headers = list(filter(header_regex.search, header_list))
+
+    if len(filtered_headers) != len(header_list):
+        print(colored('One or more invalid headers. Please Fix.', 'red'))
+        raise Exception('InvalidHeaderException')
+
+    return filtered_headers
+
+
 def main():
-    parser = argparse.ArgumentParser(description='Convert FITS headers into CSV files')
-    parser.add_argument('--dir', action='store_const', const='fits_dir',
-                        help='Directory that contains FITS files for conversion')
-    parser.add_argument('--csv', action='store_const', dest='constant_value',
-                        const='value-to-store',
-                        help='Destination CSV file')
-    parser.add_argument('--headers', action='store_const', dest='constant_value',
-                        const='value-to-store',
-                        help='Headers to extract in specified order')
-    path_list = get_args()
+    parser = argparse.ArgumentParser(description='Convert FITS headers into CSV files', formatter_class=argparse.RawTextHelpFormatter)
+    parser.add_argument('--dir', required=True, help=textwrap.dedent('''
+                        Directory that contains FITS files for conversion.
+                        Example Input: /myfits/fits/20191018.fits
+                        '''))
+    parser.add_argument('--csv', required=True, help=textwrap.dedent('''
+                        Destination path for CSV output file. Include full file name in path.
+                        Example Input: /myfits/csv/20191018fits.csv
+                        '''))
+    parser.add_argument('--headers', required=True, help=textwrap.dedent('''
+                        FITS headers to extract in specified order; comma separated.
+                        FITS headers extracted will be converted into their respective CSV column attributes.
+                        Warning: Only include alphanermic and comma characters. No spaces. Requires valid headers.
+                        Example: UTC,EPOCH,RA,DEC,EMGAIN,FILTER,OBSID,COMMENT
+                        '''))
+
+    args = parser.parse_args()
+    path_list = args.dir
     fits_files = fits_util.aggregate_fits_files(path_list)
-    headers = ['UTC', 'EPOCH', 'RA', 'DEC', 'EMGAIN', 'FILTER', 'OBSID', 'COMMENT']
+    headers = extract_headers(args.headers)
+    print(headers)
     fitsReader = FitsReader(fits_files, headers, 'fitstest.csv')
-    parser.parse_args()
-    # fitsReader.convert_all()
+    fitsReader.convert_all()
+
 
 if __name__ == "__main__":
     main()
