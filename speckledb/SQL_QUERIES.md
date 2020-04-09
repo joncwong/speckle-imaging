@@ -84,7 +84,7 @@ ON
 ```
 *Note: Rows sometimes have multiple associated SIMBAD IDs. Keys are SIMBAD IDs and values are the object type.*
 
-*Note: This query uses a "like" clause, which can conflict with other SIMBAD IDs that are substrings of one another. For example, searching for KOI-98 by replacing `%<SIMBAD_ID>%` with `%KOI-98%` will also return rows with SIMBAD IDs of KOI-984 and KOI-980.* To combat this issue, more specific SQL string operators are needed. Replacing `%KOI-98%` with `"%KOI-98\":%"` will allow the query to interpret the `"` and `:` as the end of the SIMBAD ID while keeping functionality of the search altogether since a row can have multiple associated SIMBAD IDs.  Read more on [MySQL String Comparison Functions and Operators](https://dev.mysql.com/doc/refman/8.0/en/string-comparison-functions.html](https://dev.mysql.com/doc/refman/8.0/en/string-comparison-functions.html).
+*Note: This query uses a "like" clause, which can conflict with other SIMBAD IDs that are substrings of one another. For example, searching for KOI-98 by replacing `%<SIMBAD_ID>%` with `%KOI-98%` will also return rows with SIMBAD IDs of KOI-984 and KOI-980.* To combat this issue, more specific SQL string operators are needed. Replacing `%KOI-98%` with `"%KOI-98\":%"` will allow the query to interpret the `"` and `:` as the end of the SIMBAD ID while keeping functionality of the search altogether since a row can have multiple associated SIMBAD IDs.  Read more on [MySQL String Comparison Functions and Operators](https://dev.mysql.com/doc/refman/8.0/en/string-comparison-functions.html)
 
 ### Maintenance/TODOs
 Before running any modifying queries, make sure to start a transaction with:
