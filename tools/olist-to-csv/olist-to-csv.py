@@ -218,7 +218,7 @@ if __name__ == "__main__":
         header = "star_id|fits_file|time|blue_gain|red_gain|right_asc|dec|epoch|mag|program_id|objects|search_radius|olist_id"
         new_file.write(header + "\n")
         insert_metadata_query = ("INSERT INTO metadata "
-                                "(star_id, fits_file, `time`, blue_gain, red_gain, right_asc, `dec`, epoch, mag, program_id, objects, search_radius, olist_id) " # Back ticks are needed for time and dec due to reserved keywords
+                                "(h_id, fits_file, `time`, blue_gain, red_gain, right_asc, `dec`, epoch, mag, program_id, objects, search_radius, olist_id) " # Back ticks are needed for time and dec due to reserved keywords
                                 "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)")
         for line in new_data:
             new_file.write(line + "\n")
