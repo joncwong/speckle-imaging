@@ -1,11 +1,9 @@
 from tkinter import Tk
 from tkinter.filedialog import askopenfilename
 from tkinter import messagebox
-# import csv
 import re
 import os
 from astroquery.simbad import Simbad
-# import astropy.coordinates as coord
 from astropy import units as u
 from astropy.coordinates import SkyCoord
 import mysql.connector
@@ -13,13 +11,6 @@ import logging
 from datetime import datetime
 import warnings
 from termcolor import colored
-
-
-def fxn():
-    """
-        Suppress astropy query warnings from logs
-    """
-    warnings.warn("deprecated", DeprecationWarning)
 
 
 def insert_blob():
@@ -35,18 +26,17 @@ def insert_blob():
         logger.critical("Blob " + "\"" + file_name + "\"" + "failed to insert." + " Time: " + str(datetime.now()))
         global num_of_errors
         num_of_errors += 1
-        print("Error code:", e.errno)    # error number
-        print("SQLSTATE value:", e.sqlstate)  # SQLSTATE value
-        print("Error message:", e.msg)     # error message
-        print("Error:", e)                   # errno, sqlstate, msg values
+        print("Error code:", e.errno)
+        print("SQLSTATE value:", e.sqlstate)
+        print("Error message:", e.msg)
+        print("Error:", e)
         s = str(e)
-        print("Error:", s)                   # errno, sqlstate, msg values
+        print("Error:", s)
         raise SystemExit
     finally:
         olist_id = cursor.lastrowid
         cursor.close()
     return olist_id 
-        # conn.close()
 
 
 def insert_line():
@@ -62,12 +52,12 @@ def insert_line():
         logger.critical("Failed to insert metadata with args: " + str(insert_metadata_args) + " Time: " + str(datetime.now()))
         global num_of_errors
         num_of_errors += 1
-        print("Error code:", e.errno)    # error number
-        print("SQLSTATE value:", e.sqlstate)  # SQLSTATE value
-        print("Error message:", e.msg)     # error message
-        print("Error:", e)                   # errno, sqlstate, msg values
+        print("Error code:", e.errno)    
+        print("SQLSTATE value:", e.sqlstate)
+        print("Error message:", e.msg)
+        print("Error:", e)
         s = str(e)
-        print("Error:", s)                   # errno, sqlstate, msg values
+        print("Error:", s)
 
 def query_simbad(ra, dec):
     """
@@ -78,10 +68,8 @@ def query_simbad(ra, dec):
         Returns:
         dict: Contains key/values with valuable SIMBAD query information
     """
-    fxn()
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
-        fxn()
         simbad_results = {} 
         objects = {}
         customSimbad = Simbad()
@@ -93,7 +81,6 @@ def query_simbad(ra, dec):
             try:
                 results = customSimbad.query_region(coord, radius=radius * u.deg)
                 result_len = len(results)
-                #print("num of results at " + str(radius) + " radius: " + str(result_len))
                 radius = radius * 2
             except:
                 radius = radius * 2
@@ -121,23 +108,22 @@ if __name__ == "__main__":
     num_of_errors = 0
     # Opens a dialog box for user to select .olist file to convert 
     Tk().withdraw() 
-    file_name = askopenfilename(filetypes=[("Olist Files", "*.")]) 
+    # If neede
+    file_name = askopenfilename(filetypes=[("Olist Files", "*.olist")]) 
     head, tail = os.path.split(file_name)
-    print(file_name)
 
     with open(file_name) as file:
         data = file.read()
 
-    # Database Configurations 
+    # Database Configurations
+    # Fill in strings with your local MySQL configurations
     conn = mysql.connector.connect(
         host="localhost",
-        db="speckle",
+        db="speckle-test",
         user="speckle",
         passwd="speckle"
     )
     cursor = conn.cursor()
-    print(conn)
-    # conn.close()
 
     # Logging configuration
     logger = logging.getLogger('audit')
@@ -145,8 +131,6 @@ if __name__ == "__main__":
     handler.setLevel(logging.CRITICAL)
     logger.addHandler(handler)
 
-    # logging.basicConfig(filename='olist.log',level=logging.INFO, format='%(asctime)s - %(message)s')
-    # logging.captureWarnings(False)
     # Queries
     insert_blob_query = "INSERT INTO olist (name, file) VALUES (%s, %s)"
     insert_args = (tail, data)
@@ -169,7 +153,7 @@ if __name__ == "__main__":
                         line_split = line.split("#")
                         line = line_split[0]
                         comment = line_split[1]
-                    # Replace "HR 1231" with "HR_1231"
+                    # Replace h_id's "HR 1231" with "HR_1231"
                     if str(line[:2]) == "HR":
                         line = line[:2] + "_" + line[3:]
                     # Strip double spaces and replace with single space
@@ -198,17 +182,12 @@ if __name__ == "__main__":
                     simbad_results = query_simbad(ra, dec)
                     # Join first 9 entries with 10th entry, the simbad objects, and the simbad range creating the essential line
                     line = first_nine_entries + "|" + tenth_entry + "|" + str(simbad_results['objects']) + "|" + str(simbad_results['radius'])
-                    # print(line)
                     # Add line and reformatted comments back into the dataset
                     # if not comment:
                     # Once again, strip any double spaces from joining the other entries
                     line = re.sub("\s\s+", " ", line)
                     line = line + "|" + str(olist_id)
-                    # else:
-                    #     line = line + "|" + comment
-                    #     line = re.sub("\s\s+", " ", line)
                     new_data.append(line)
-                    # print(line)
         except ValueError as e:
             valEror = True
             num_of_errors += 1
@@ -216,7 +195,8 @@ if __name__ == "__main__":
             logger.critical("Value Error: " + str(e) + " - File: " + tail + " - Line: " + line + " - Time: " + str(datetime.now()))
 
     # Write .csv file with python lists
-    with open("newbatch" + tail + ".csv", 'w+') as new_file:
+    curr_time = str(datetime.utcnow()).replace(" ", "-")
+    with open(curr_time + "." + tail + ".csv", 'w+') as new_file:
         # write header
         header = "h_id|fits_file|time|blue_gain|red_gain|right_asc|dec|epoch|mag|program_id|objects|search_radius|olist_id|instrument"
         new_file.write(header + "\n")
@@ -234,20 +214,17 @@ if __name__ == "__main__":
                 args_list[4] = None
             if len(str(args_list[1])) > 5:
                 insert_metadata_args = (args_list[0], None, None, None, None, args_list[1], args_list[2], args_list[3], args_list[4], args_list[5], args_list[10], args_list[11], args_list[12], "alopeke?")
-                # print(insert_metadata_args)
-                # print(args_list)
-
             else:
                 insert_metadata_args = (args_list[0], args_list[1], args_list[2], args_list[3], args_list[4], args_list[5], args_list[6], args_list[7], args_list[8], args_list[9], args_list[10], args_list[11], args_list[12], "alopeke?")
             insert_line()
         print("Done writing file.")
-        print("File written as: newbatch" + tail + ".csv")
+        print("File written as: " + curr_time + "." + tail + ".csv")
 
     if valEror:
         Tk().deiconify()
         messagebox.showwarning("Warning", "A value occured, please check olist.log and manually audit the data")
         print(colored("THERE WAS AN ERROR CHECK LOGS", "red"))
     if num_of_errors > 0:
-        print(colored("There were " + str(num_of_errors) + " in this batch, check olist.log and manually import the data or rerun", "red"))
+        print(colored("There were " + str(num_of_errors) + " in this batch, check olist.log and manually import the data or fork/edit the script", "red"))
 
     conn.close()
