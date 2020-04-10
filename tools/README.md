@@ -5,6 +5,7 @@
 - Olist files contain 10 columns, with multiple rows, and comments. The goal is to extract all 10 columns into entries within a csv row, as well as take the coordinates of a row, and enter in additional information from querying SIMBAD (objects received from a coordinate search and what radius was used)
 
 ### fits-header-to-csv.py
+**Development on this script/CLI halted. Somewhat functional at this point.**
 Description: Outputs a .csv file based on a .fits file's header
 - Developed on Python 3.7
 - Running the script will open up a file dialogue prompt for the user to choose which fits file they want to convert into a .csv file
