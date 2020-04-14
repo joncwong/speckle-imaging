@@ -88,7 +88,11 @@ We can create and run a SQL statement on the database to manually insert the inv
 
 Failed Runs:
 
-TODO
+In failed runs (runs with more errors than can be manually entered), use your best judgement as to whether or not a re-run is needed or a fork of the script is needed.
+
+*Note: Before re-running, please drop the olist row that you plan on rerunning.*
+
+![Olist drop example](./images/drop-olist.png "Example drop")
 
 
 ### ~~fits-header-to-csv.py~~
