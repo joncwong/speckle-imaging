@@ -4,6 +4,8 @@
 
 This directory contains all the backups of SpeckleDB in SQL dumps. The dates in which each backup was created is embedded in the file name.
 
+As of 04/25/2020, the most up-to-date backup is: **speckle_dump_04_23_2020.sql**
+
 # Data Format
 
 ### Tables
